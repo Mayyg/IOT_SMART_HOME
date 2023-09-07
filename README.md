@@ -1,2 +1,2 @@
-# IOT_SMART_HOME
+# HomeGlow
 **Smart Light**
