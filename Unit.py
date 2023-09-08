@@ -217,7 +217,7 @@ class ConnectionDock(QDockWidget):
                 backcolor = 0
             else:
                 brightlevel = 10 - brightlevel
-                backcolor = 255 - (brightlevel * 25)
+                backcolor = 255 - (brightlevel-1) * 25
             self.eBrightness.setStyleSheet(f"""
             background-color: rgb({backcolor}, {backcolor}, {backcolor});
             color: {text_color};
