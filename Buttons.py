@@ -164,12 +164,19 @@ class ConnectionDock(QDockWidget):
         self.eConnectbtn=QPushButton("Connect", self)
         self.eConnectbtn.setToolTip("Click me to connect")
         self.eConnectbtn.clicked.connect(self.on_button_connect_click)
-        self.eConnectbtn.setStyleSheet("background-color: LightGray")
+        self.eConnectbtn.setStyleSheet(f"""
+        background-color: #f5f5f5;  /* Light gray background color */
+        color: #333333;  /* Text color (dark gray) */
+        border: 2px solid #dcdcdc;  /* Border style (light gray) */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
         
         self.ePushtbtn=QPushButton("Click", self)
         self.ePushtbtn.setToolTip("Click")
         self.ePushtbtn.clicked.connect(self.push_button_click)
-        self.ePushtbtn.setStyleSheet("background-color: DodgerBlue")
+        self.ePushtbtn.setStyleSheet(f"""background-color: #2ba6cb;
+        color: white;  /* Text color */
+        border: 2px solid #2ba6cb;  /* Border style */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
 
         self.ePublisherTopic=QLineEdit()
         self.ePublisherTopic.setText(publisher_topic)
@@ -194,7 +201,12 @@ class ConnectionDock(QDockWidget):
         self.setWindowTitle("App") 
         
     def on_connected(self):
-        self.eConnectbtn.setStyleSheet("background-color: green")
+        self.eConnectbtn.setStyleSheet(f"""
+        background-color: #4CAF50;  /* Green background color */
+        color: white;  /* Text color (white) */
+        border: 2px solid #45a049;  /* Border style (a darker green) */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
+        
                     
     def on_button_connect_click(self):
         self.mc.set_broker(self.eHostInput.text())
@@ -206,17 +218,19 @@ class ConnectionDock(QDockWidget):
         self.mc.start_listening()
 
     def push_button_click(self):
-        modeText = self.eMode.currentText().upper()
+        modeText = self.eMode.currentText()
         userBright = int(self.eBrightness.currentText())  # Use currentText() for QComboBox
 
         # check valid mode
-        if (modeText == "RED" or modeText == "BLUE" or modeText == "GREEN" or
-                modeText == "YELLOW" or modeText == "PINK" or modeText == "WHITE" or modeText == "OFF"):
+        if (modeText == "Red" or modeText == "Blue" or modeText == "Green" or
+                modeText == "Yellow" or modeText == "Pink" or modeText == "White" or modeText == "OFF"):
             self.mc.publish_to(self.ePublisherTopic.text(), modeText)
+            print(modeText)
 
         # check if range is in valid range
         if userBright >= 1 and userBright <= 10:
-            self.mc.publish_to(self.ePublisherTopic.text(), str(userBright))  # Convert to string
+            self.mc.publish_to(self.ePublisherTopic.text(), (userBright))  # Convert to string
+            print(userBright)
         else:
             print("Brightness is in incorrect range, try again")
             self.mc.publish_to(self.ePublisherTopic.text(), "Brightness is in incorrect range, try again")

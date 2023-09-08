@@ -11,13 +11,15 @@ import time
 import datetime
 from init import *
 
+#from PyQt5.QtCore import QTimer
+
 # Creating Client name - should be unique 
 global clientname, CONNECTED
 CONNECTED = False
 r=random.randrange(1,10000000)
 clientname="IOT_client-Id1234-"+str(r)
 DHT_topic = 'pr/SmartHome/Light/main'
-update_rate = 5000 
+update_rate = 5000 # in msec
 
 class Mqtt_client():
     
@@ -165,22 +167,22 @@ class ConnectionDock(QDockWidget):
         self.eConnectbtn=QPushButton("Connect", self)
         self.eConnectbtn.setToolTip("Click me to connect")
         self.eConnectbtn.clicked.connect(self.on_button_connect_click)
-        self.eConnectbtn.setStyleSheet("background-color: LightGray")
+        self.eConnectbtn.setStyleSheet(f"""
+        background-color: #f5f5f5;  /* Light gray background color */
+        color: #333333;  /* Text color (dark gray) */
+        border: 2px solid #dcdcdc;  /* Border style (light gray) */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
         
         self.ePublisherTopic=QLineEdit()
         self.ePublisherTopic.setText(DHT_topic)
 
-        self.Mode=QLineEdit()
-        self.Mode.setText('')
-
-        self.Brightness=QLineEdit()
-        self.Brightness.setText('')
+        self.LightSensor=QLineEdit()
+        self.LightSensor.setText('5.0')
 
         formLayot=QFormLayout()       
         formLayot.addRow("Turn On/Off",self.eConnectbtn)
         formLayot.addRow("Pub topic",self.ePublisherTopic)
-        formLayot.addRow("Mode",self.Mode)
-        formLayot.addRow("Brightness",self.Brightness)
+        formLayot.addRow("LightSensor (5V - 0V)",self.LightSensor)
 
         widget = QWidget(self)
         widget.setLayout(formLayot)
@@ -189,7 +191,11 @@ class ConnectionDock(QDockWidget):
         self.setWindowTitle("DHT app") 
         
     def on_connected(self):
-        self.eConnectbtn.setStyleSheet("background-color: green")
+        self.eConnectbtn.setStyleSheet(f"""
+        background-color: #4CAF50;  /* Green background color */
+        color: white;  /* Text color (white) */
+        border: 2px solid #45a049;  /* Border style (a darker green) */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
                     
     def on_button_connect_click(self):
         self.mc.set_broker(self.eHostInput.text())
@@ -229,12 +235,11 @@ class MainWindow(QMainWindow):
 
     def update_data(self):
         print('Next update')
-        colors = ["Red", "Green", "Blue","Yellow","White","Pink"]
-        mode=random.choice(colors)
-        bright=random.randrange(1,10)
-        current_data='Mode: '+str(mode)+' Brightness: '+str(bright)
-        self.connectionDock.Mode.setText(str(mode))
-        self.connectionDock.Brightness.setText(str(bright))
+        random_integer = random.randint(1, 50)
+        lightSens = round(random_integer / 10.0, 1)
+        lightSens = max(0.1, min(5.0, lightSens))
+        current_data='Light Sensor: '+str(lightSens)
+        self.connectionDock.LightSensor.setText(str(lightSens))
         self.mc.publish_to(DHT_topic,current_data)
         
 

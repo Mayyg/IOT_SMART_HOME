@@ -10,12 +10,12 @@ import paho.mqtt.client as mqtt
 import time
 import datetime
 from init import *
-
+#broker.hivemq.com
 # Creating Client name - should be unique 
 global clientname
 r=random.randrange(1,10000000)
 clientname="IOT_client-Id1234-"+str(r)
-ac_topic = 'pr/SmartHome/Light/main'
+unit_topic = 'pr/SmartHome/Light/main'
 global ON
 ON = False
 
@@ -143,21 +143,35 @@ class ConnectionDock(QDockWidget):
         self.ePassword.setEchoMode(QLineEdit.Password)
         self.ePassword.setText(password)
 
-        self.eBrightness=QLineEdit()
-        self.eBrightness.setValidator(QIntValidator())
-        self.eBrightness.setText("")
 
+        self.eBrightness=QPushButton()
+        self.eBrightness.setStyleSheet(f"""
+            background-color: #FFFFFF;  /* White background color */
+            color: black;  /* Text color (black) */
+            border: 2px solid #DDDDDD;  /* Border style (a light gray) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
+        self.eBrightness.setToolTip("1")
         
         self.eConnectbtn=QPushButton("Connect", self)
         self.eConnectbtn.setToolTip("Click me to connect")
         self.eConnectbtn.clicked.connect(self.on_button_connect_click)
-        self.eConnectbtn.setStyleSheet("background-color: LightGray")
+        self.eConnectbtn.setStyleSheet(f"""
+        background-color: #f5f5f5;  /* Light gray background color */
+        color: #333333;  /* Text color (dark gray) */
+        border: 2px solid #dcdcdc;  /* Border style (light gray) */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
         
         self.eSubscribeTopic=QLineEdit("")
-        self.eSubscribeTopic.setText(ac_topic)
+        self.eSubscribeTopic.setText(unit_topic)
 
         self.ePushtbtn=QPushButton()
-        self.ePushtbtn.setStyleSheet("background-color: Gray")
+        self.ePushtbtn.setStyleSheet(f"""
+            background-color: #FFFFFF;  /* White background color */
+            color: black;  /* Text color (black) */
+            border: 2px solid #DDDDDD;  /* Border style (a light gray) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
         self.ePushtbtn.setToolTip("OFF")
 
         formLayot=QFormLayout()
@@ -176,7 +190,11 @@ class ConnectionDock(QDockWidget):
         self.setWindowTitle("Light") 
         
     def on_connected(self):
-        self.eConnectbtn.setStyleSheet("background-color: green")
+        self.eConnectbtn.setStyleSheet(f"""
+        background-color: #4CAF50;  /* Green background color */
+        color: white;  /* Text color (white) */
+        border: 2px solid #45a049;  /* Border style (a darker green) */
+        padding: 5px 10px;  /* Padding (adjust as needed) */""")
                     
     def on_button_connect_click(self):
         self.mc.set_broker(self.eHostInput.text())
@@ -189,7 +207,24 @@ class ConnectionDock(QDockWidget):
         self.mc.subscribe_to(self.eSubscribeTopic.text())
     
     def update_btn_state(self,text):
-        
+        if(text.isdigit()):
+            self.eBrightness.setText(text)
+            brightlevel = int(text)
+            text_color = "white" if brightlevel < 8 else "black"
+            if(brightlevel == 10):
+                backcolor = 255
+            elif(brightlevel == 1):
+                backcolor = 0
+            else:
+                brightlevel = 10 - brightlevel
+                backcolor = 255 - (brightlevel * 25)
+            self.eBrightness.setStyleSheet(f"""
+            background-color: rgb({backcolor}, {backcolor}, {backcolor});
+            color: {text_color};
+            border: 2px solid rgb({backcolor - 25}, {backcolor - 25}, {backcolor - 25});  /* Border style (a darker gray) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
+            
         global ON
         if "OFF" in text:
             print("Turn off...")
@@ -200,31 +235,67 @@ class ConnectionDock(QDockWidget):
             ON = False
         elif "Red" in text:
             print("Red mode is activated...")
-            self.ePushtbtn.setStyleSheet("background-color: Red")
+            self.ePushtbtn.setStyleSheet(f"""
+            background-color: #FF0000;  /* Red background color */
+            color: white;  /* Text color (white) */
+            border: 2px solid #CC0000;  /* Border style (a darker red) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
             self.ePushtbtn.setToolTip("Red")
             self.ePushtbtn.setText("Red")
+            ON = True 
+        elif "Green" in text:
+            print("Green mode is activated...")
+            self.ePushtbtn.setStyleSheet(f"""
+            background-color: #4CAF50;  /* Green background color */
+            color: white;  /* Text color (white) */
+            border: 2px solid #45a049;  /* Border style (a darker green) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
+            self.ePushtbtn.setToolTip("Green")
+            self.ePushtbtn.setText("Green")
             ON = True    
         elif "Blue" in text:
             print("Blue mode is activated...")
-            self.ePushtbtn.setStyleSheet("background-color: Blue")
+            self.ePushtbtn.setStyleSheet(f"""
+            background-color: #0074cc;  /* Blue background color */
+            color: white;  /* Text color (white) */
+            border: 2px solid #005aa3;  /* Border style (a darker blue) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
             self.ePushtbtn.setToolTip("Blue")
             self.ePushtbtn.setText("Blue")
             ON = True    
         elif "Yellow" in text:
             print("Yellow mode is activated...")
-            self.ePushtbtn.setStyleSheet("background-color: Yellow")
+            self.ePushtbtn.setStyleSheet(f"""
+            background-color: #FFFF00;  /* Yellow background color */
+            color: black;  /* Text color (black) */
+            border: 2px solid #FFD700;  /* Border style (a darker yellow) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
             self.ePushtbtn.setToolTip("Yellow")
             self.ePushtbtn.setText("Yellow")
             ON = True    
         elif "White" in text:
             print("White mode is activated...")
-            self.ePushtbtn.setStyleSheet("background-color: White")
+            self.ePushtbtn.setStyleSheet(f"""
+            background-color: #FFFFFF;  /* White background color */
+            color: black;  /* Text color (black) */
+            border: 2px solid #DDDDDD;  /* Border style (a light gray) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
             self.ePushtbtn.setToolTip("White")
             self.ePushtbtn.setText("White")
             ON = True
         elif "Pink" in text:
             print("Pink mode is activated...")
-            self.ePushtbtn.setStyleSheet("background-color: Pink")
+            self.ePushtbtn.setStyleSheet(f"""
+            background-color: #FF69B4;  /* Pink background color */
+            color: white;  /* Text color (white) */
+            border: 2px solid #FF1493;  /* Border style (a darker pink) */
+            padding: 5px 10px;  /* Padding (adjust as needed) */
+            """)
             self.ePushtbtn.setToolTip("Pink")
             self.ePushtbtn.setText("Pink")
             ON = True
