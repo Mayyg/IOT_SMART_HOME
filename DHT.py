@@ -238,9 +238,13 @@ class MainWindow(QMainWindow):
         random_integer = random.randint(1, 50)
         lightSens = round(random_integer / 10.0, 1)
         lightSens = max(0.1, min(5.0, lightSens))
-        current_data='Light Sensor: '+str(lightSens)
+        current_data = 'Light Sensor: ' + str(lightSens)
         self.connectionDock.LightSensor.setText(str(lightSens))
-        self.mc.publish_to(DHT_topic,current_data)
+        self.mc.publish_to(DHT_topic, current_data)
+        if lightSens < 2.5:
+            self.mc.publish_to(DHT_topic,  "Low light detected")
+        else:
+            self.mc.publish_to(DHT_topic,  "High light detected")
         
 
 
